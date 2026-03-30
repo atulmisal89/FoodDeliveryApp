@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    
+    <mirrors>
+        <!-- Mirror for Central Repository -->
+        <mirror>
+            <id>central-mirror</id>
+            <mirrorOf>central</mirrorOf>
+            <name>Aliyun Central Repository</name>
+            <url>https://maven.aliyun.com/repository/central</url>
+        </mirror>
+        
+        <!-- Mirror for Spring Repository -->
+        <mirror>
+            <id>spring-mirror</id>
+            <mirrorOf>spring</mirrorOf>
+            <name>Spring Repository</name>
+            <url>https://repo.spring.io/release</url>
+        </mirror>
+    </mirrors>
+    
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+                <!-- Central Repository -->
+                <repository>
+                    <id>central</id>
+                    <name>Central Repository</name>
+                    <url>https://maven.aliyun.com/repository/central</url>
+                    <layout>default</layout>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+                
+                <!-- Spring Repository -->
+                <repository>
+                    <id>spring</id>
+                    <name>Spring Repository</name>
+                    <url>https://repo.spring.io/release</url>
+                    <layout>default</layout>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            
+            <pluginRepositories>
+                <!-- Central Plugin Repository -->
+                <pluginRepository>
+                    <id>central</id>
+                    <name>Central Plugin Repository</name>
+                    <url>https://maven.aliyun.com/repository/central</url>
+                    <layout>default</layout>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+</settings>

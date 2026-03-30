@@ -1,0 +1,17 @@
+package com.fooddelivery.notificationservice.entity;
+
+public enum NotificationType {
+    ORDER_CREATED,
+    ORDER_CONFIRMED,
+    ORDER_PREPARING,
+    ORDER_READY,
+    DELIVERY_ASSIGNED,
+    DELIVERY_PICKED_UP,
+    DELIVERY_ON_THE_WAY,
+    DELIVERY_COMPLETED,
+    PAYMENT_SUCCESSFUL,
+    PAYMENT_FAILED,
+    ORDER_CANCELLED,
+    REFUND_INITIATED,
+    REFUND_COMPLETED
+}

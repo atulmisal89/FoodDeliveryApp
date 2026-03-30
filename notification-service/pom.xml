@@ -9,33 +9,23 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>com.fooddelivery</groupId>
-	<artifactId>api-gateway</artifactId>
+	<artifactId>notification-service</artifactId>
 	<version>1.0.0</version>
-	<name>API Gateway</name>
-	<description>API Gateway for Food Delivery Microservices</description>
+	<name>Notification Service</name>
+	<description>Notification Service for Food Delivery Microservices</description>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-gateway</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId>
-			<scope>runtime</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
