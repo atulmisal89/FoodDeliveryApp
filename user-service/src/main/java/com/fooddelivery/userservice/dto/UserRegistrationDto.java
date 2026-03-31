@@ -31,4 +31,6 @@ public class UserRegistrationDto {
     private String phoneNumber;
     
     private UserRole role = UserRole.CUSTOMER;
+    
+    private AddressDto address;
 }

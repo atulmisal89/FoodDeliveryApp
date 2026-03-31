@@ -209,18 +209,22 @@ public class OrderService {
     }
     
     private void publishOrderEvent(Order order, String eventType) {
-        OrderEvent event = OrderEvent.builder()
-                .orderId(order.getId())
-                .orderNumber(order.getOrderNumber())
-                .customerId(order.getCustomerId())
-                .restaurantId(order.getRestaurantId())
-                .status(order.getStatus().name())
-                .eventType(eventType)
-                .timestamp(LocalDateTime.now())
-                .build();
-        
-        kafkaTemplate.send("order-events", event);
-        log.info("Published {} event for order {}", eventType, order.getOrderNumber());
+        try {
+            OrderEvent event = OrderEvent.builder()
+                    .orderId(order.getId())
+                    .orderNumber(order.getOrderNumber())
+                    .customerId(order.getCustomerId())
+                    .restaurantId(order.getRestaurantId())
+                    .status(order.getStatus().name())
+                    .eventType(eventType)
+                    .timestamp(LocalDateTime.now())
+                    .build();
+            
+            kafkaTemplate.send("order-events", event);
+            log.info("Published {} event for order {}", eventType, order.getOrderNumber());
+        } catch (Exception e) {
+            log.warn("Failed to publish {} event for order {}: {}", eventType, order.getOrderNumber(), e.getMessage());
+        }
     }
     
     private OrderResponseDto mapToResponseDto(Order order) {

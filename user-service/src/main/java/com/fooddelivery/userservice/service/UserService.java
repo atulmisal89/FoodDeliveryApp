@@ -56,6 +56,24 @@ public class UserService {
         
         User savedUser = userRepository.save(user);
         
+        // Save address if provided
+        if (registrationDto.getAddress() != null) {
+            AddressDto addrDto = registrationDto.getAddress();
+            Address address = new Address();
+            address.setStreet(addrDto.getStreet());
+            address.setCity(addrDto.getCity());
+            address.setState(addrDto.getState());
+            address.setZipCode(addrDto.getZipCode());
+            address.setCountry(addrDto.getCountry());
+            address.setLandmark(addrDto.getLandmark());
+            address.setType(addrDto.getType());
+            address.setDefault(addrDto.isDefault());
+            address.setLatitude(addrDto.getLatitude());
+            address.setLongitude(addrDto.getLongitude());
+            address.setUser(savedUser);
+            addressRepository.save(address);
+        }
+        
         return mapToUserResponseDto(savedUser);
     }
     
