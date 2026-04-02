@@ -6,11 +6,13 @@ import com.fooddelivery.paymentservice.dto.RefundRequestDto;
 import com.fooddelivery.paymentservice.entity.Payment;
 import com.fooddelivery.paymentservice.entity.PaymentGateway;
 import com.fooddelivery.paymentservice.entity.PaymentStatus;
+import com.fooddelivery.paymentservice.event.OrderEvent;
 import com.fooddelivery.paymentservice.exception.PaymentException;
 import com.fooddelivery.paymentservice.exception.ResourceNotFoundException;
 import com.fooddelivery.paymentservice.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -240,5 +242,22 @@ public class PaymentService {
         private String status;
         private String eventType;
         private LocalDateTime timestamp;
+    }
+    
+    @KafkaListener(topics = "order-events", groupId = "payment-service-group")
+    public void handleOrderEvent(OrderEvent event) {
+        log.info("Received order event: {} for order {}", event.getEventType(), event.getOrderId());
+        
+        // Handle order events as needed
+        switch (event.getEventType()) {
+            case "ORDER_CREATED":
+                log.info("Order {} created, preparing for payment", event.getOrderId());
+                break;
+            case "ORDER_CANCELLED":
+                log.info("Order {} cancelled, cancelling payment if any", event.getOrderId());
+                break;
+            default:
+                log.debug("Unhandled order event type: {}", event.getEventType());
+        }
     }
 }
