@@ -3,7 +3,9 @@ package com.fooddelivery.orderservice.service;
 import com.fooddelivery.orderservice.dto.*;
 import com.fooddelivery.orderservice.entity.*;
 import com.fooddelivery.orderservice.event.OrderEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fooddelivery.orderservice.event.PaymentEvent;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import com.fooddelivery.orderservice.exception.ResourceNotFoundException;
 import com.fooddelivery.orderservice.exception.InvalidOrderStateException;
 import com.fooddelivery.orderservice.repository.OrderRepository;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,6 +32,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final KafkaTemplate<String, OrderEvent> kafkaTemplate;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     
     private static final double TAX_RATE = 0.18; // 18% GST
     
@@ -273,37 +277,36 @@ public class OrderService {
     }
     
     @KafkaListener(topics = "payment-events", groupId = "order-service-group")
-    public void handlePaymentEvent(PaymentEvent event) {
-        if ("PAYMENT_SUCCESS".equals(event.getEventType())) {
-            try {
-                Order order = orderRepository.findById(event.getOrderId())
-                        .orElseThrow(() -> new RuntimeException("Order not found with id: " + event.getOrderId()));
+    public void handlePaymentEvent(ConsumerRecord<String, String> record) {
+        try {
+            Map<String, Object> event = objectMapper.readValue(record.value(), Map.class);
+            String eventType = (String) event.get("eventType");
+            
+            if ("PAYMENT_SUCCESS".equals(eventType)) {
+                Order order = orderRepository.findById(((Number) event.get("orderId")).longValue())
+                        .orElseThrow(() -> new RuntimeException("Order not found with id: " + event.get("orderId")));
                 
-                order.setPaymentId(event.getPaymentId().toString());
+                order.setPaymentId(event.get("paymentId") != null ? event.get("paymentId").toString() : null);
                 order.setPaymentStatus(PaymentStatus.COMPLETED);
                 order.setStatus(OrderStatus.CONFIRMED);
                 
                 orderRepository.save(order);
                 
-                log.info("Order {} confirmed after payment success", event.getOrderId());
-            } catch (Exception e) {
-                log.error("Failed to process payment event for order {}: {}", event.getOrderId(), e.getMessage());
-            }
-        } else if ("PAYMENT_FAILED".equals(event.getEventType())) {
-            try {
-                Order order = orderRepository.findById(event.getOrderId())
-                        .orElseThrow(() -> new RuntimeException("Order not found with id: " + event.getOrderId()));
+                log.info("Order {} confirmed after payment success", order.getId());
+            } else if ("PAYMENT_FAILED".equals(eventType)) {
+                Order order = orderRepository.findById(((Number) event.get("orderId")).longValue())
+                        .orElseThrow(() -> new RuntimeException("Order not found with id: " + event.get("orderId")));
                 
-                order.setPaymentId(event.getPaymentId() != null ? event.getPaymentId().toString() : null);
+                order.setPaymentId(event.get("paymentId") != null ? event.get("paymentId").toString() : null);
                 order.setPaymentStatus(PaymentStatus.FAILED);
                 order.setStatus(OrderStatus.CANCELLED);
                 
                 orderRepository.save(order);
                 
-                log.info("Order {} cancelled after payment failure", event.getOrderId());
-            } catch (Exception e) {
-                log.error("Failed to process payment failure event for order {}: {}", event.getOrderId(), e.getMessage());
+                log.info("Order {} cancelled after payment failure", order.getId());
             }
+        } catch (Exception e) {
+            log.error("Failed to process payment event: {}", e.getMessage());
         }
     }
 }

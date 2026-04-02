@@ -6,7 +6,8 @@ import com.fooddelivery.paymentservice.dto.RefundRequestDto;
 import com.fooddelivery.paymentservice.entity.Payment;
 import com.fooddelivery.paymentservice.entity.PaymentGateway;
 import com.fooddelivery.paymentservice.entity.PaymentStatus;
-import com.fooddelivery.paymentservice.event.OrderEvent;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import com.fooddelivery.paymentservice.exception.PaymentException;
 import com.fooddelivery.paymentservice.exception.ResourceNotFoundException;
 import com.fooddelivery.paymentservice.repository.PaymentRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -190,7 +192,8 @@ public class PaymentService {
         // In real implementation, this would call actual payment gateway APIs
         
         // For demo purposes, randomly succeed 90% of payments
-        return Math.random() > 0.1;
+        //return Math.random() > 0.1;
+        return false;  // Force failure for testing
     }
     
     private String generateTransactionId() {
@@ -244,20 +247,30 @@ public class PaymentService {
         private LocalDateTime timestamp;
     }
     
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    
     @KafkaListener(topics = "order-events", groupId = "payment-service-group")
-    public void handleOrderEvent(OrderEvent event) {
-        log.info("Received order event: {} for order {}", event.getEventType(), event.getOrderId());
-        
-        // Handle order events as needed
-        switch (event.getEventType()) {
-            case "ORDER_CREATED":
-                log.info("Order {} created, preparing for payment", event.getOrderId());
-                break;
-            case "ORDER_CANCELLED":
-                log.info("Order {} cancelled, cancelling payment if any", event.getOrderId());
-                break;
-            default:
-                log.debug("Unhandled order event type: {}", event.getEventType());
+    public void handleOrderEvent(ConsumerRecord<String, String> record) {
+        try {
+            Map<String, Object> event = objectMapper.readValue(record.value(), Map.class);
+            String eventType = (String) event.get("eventType");
+            Long orderId = ((Number) event.get("orderId")).longValue();
+            
+            log.info("Received order event: {} for order {}", eventType, orderId);
+            
+            // Handle order events as needed
+            switch (eventType) {
+                case "ORDER_CREATED":
+                    log.info("Order {} created, preparing for payment", orderId);
+                    break;
+                case "ORDER_CANCELLED":
+                    log.info("Order {} cancelled, cancelling payment if any", orderId);
+                    break;
+                default:
+                    log.debug("Unhandled order event type: {}", eventType);
+            }
+        } catch (Exception e) {
+            log.error("Failed to process order event: {}", e.getMessage());
         }
     }
 }
