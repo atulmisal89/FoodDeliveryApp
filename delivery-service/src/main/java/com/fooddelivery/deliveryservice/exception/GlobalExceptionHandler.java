@@ -26,6 +26,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DeliveryPersonNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleDeliveryPersonNotFoundException(DeliveryPersonNotFoundException ex) {
+        log.error("Delivery person not found: {}", ex.getMessage());
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.NOT_FOUND.value());
+        response.put("error", "Delivery Person Not Found");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(InvalidDeliveryStateException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidDeliveryStateException(InvalidDeliveryStateException ex) {
         log.error("Invalid delivery state: {}", ex.getMessage());

@@ -31,7 +31,7 @@ public class Delivery {
     @Column(nullable = false)
     private Long restaurantId;
     
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Long deliveryPersonId;
     
     private String deliveryPersonName;
