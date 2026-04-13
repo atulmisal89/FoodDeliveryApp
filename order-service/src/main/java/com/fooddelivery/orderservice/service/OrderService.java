@@ -41,6 +41,7 @@ public class OrderService {
         Order order = new Order();
         order.setOrderNumber(generateOrderNumber());
         order.setCustomerId(createOrderDto.getCustomerId());
+        order.setCustomerEmail(createOrderDto.getCustomerEmail());
         order.setRestaurantId(createOrderDto.getRestaurantId());
         order.setRestaurantName(createOrderDto.getRestaurantName());
         order.setDeliveryAddress(createOrderDto.getDeliveryAddress());
@@ -220,6 +221,7 @@ public class OrderService {
                     .orderId(order.getId())
                     .orderNumber(order.getOrderNumber())
                     .customerId(order.getCustomerId())
+                    .customerEmail(order.getCustomerEmail())
                     .restaurantId(order.getRestaurantId())
                     .status(order.getStatus().name())
                     .eventType(eventType)

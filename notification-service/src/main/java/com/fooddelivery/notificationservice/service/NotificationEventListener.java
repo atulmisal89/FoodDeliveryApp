@@ -73,11 +73,11 @@ public class NotificationEventListener {
         dto.setMessage(String.format("Your order %s has been received and is being processed. We'll notify you once it's ready!",
                 event.getOrderNumber()));
         dto.setType(NotificationType.EMAIL);
-        dto.setRecipientEmail(getCustomerEmail(event.getCustomerId()));
+        dto.setRecipientEmail(event.getCustomerEmail());
         dto.setRelatedOrderId(event.getOrderId());
 
         notificationService.sendNotification(dto);
-        log.info("Order created email sent for order {}", event.getOrderNumber());
+        log.info("Order created email sent to {} for order {}", event.getCustomerEmail(), event.getOrderNumber());
     }
 
     private void sendDeliveryAssignedEmail(OrderEvent event) {
@@ -87,11 +87,11 @@ public class NotificationEventListener {
         dto.setMessage(String.format("Good news! Your order %s is out for delivery. Our delivery partner will reach you soon.",
                 event.getOrderNumber()));
         dto.setType(NotificationType.EMAIL);
-        dto.setRecipientEmail(getCustomerEmail(event.getCustomerId()));
+        dto.setRecipientEmail(event.getCustomerEmail());
         dto.setRelatedOrderId(event.getOrderId());
 
         notificationService.sendNotification(dto);
-        log.info("Delivery assigned email sent for order {}", event.getOrderNumber());
+        log.info("Delivery assigned email sent to {} for order {}", event.getCustomerEmail(), event.getOrderNumber());
     }
 
     private void sendOrderDeliveredEmail(OrderEvent event) {
@@ -101,11 +101,11 @@ public class NotificationEventListener {
         dto.setMessage(String.format("Your order %s has been delivered. Enjoy your meal! We hope to see you again soon.",
                 event.getOrderNumber()));
         dto.setType(NotificationType.EMAIL);
-        dto.setRecipientEmail(getCustomerEmail(event.getCustomerId()));
+        dto.setRecipientEmail(event.getCustomerEmail());
         dto.setRelatedOrderId(event.getOrderId());
 
         notificationService.sendNotification(dto);
-        log.info("Order delivered email sent for order {}", event.getOrderNumber());
+        log.info("Order delivered email sent to {} for order {}", event.getCustomerEmail(), event.getOrderNumber());
     }
 
     private void sendPaymentSuccessEmail(PaymentEvent event) {
@@ -115,11 +115,11 @@ public class NotificationEventListener {
         dto.setMessage(String.format("Your payment of Rs. %.2f for order has been received. Transaction ID: %s",
                 event.getAmount(), event.getTransactionId()));
         dto.setType(NotificationType.EMAIL);
-        dto.setRecipientEmail(getCustomerEmail(event.getCustomerId()));
+        dto.setRecipientEmail(event.getCustomerEmail());
         dto.setRelatedOrderId(event.getOrderId());
 
         notificationService.sendNotification(dto);
-        log.info("Payment success email sent for transaction {}", event.getTransactionId());
+        log.info("Payment success email sent to {} for transaction {}", event.getCustomerEmail(), event.getTransactionId());
     }
 
     private void sendPaymentFailedEmail(PaymentEvent event) {
@@ -129,11 +129,11 @@ public class NotificationEventListener {
         dto.setMessage(String.format("We couldn't process your payment of Rs. %.2f. Please try again or use a different payment method.",
                 event.getAmount()));
         dto.setType(NotificationType.EMAIL);
-        dto.setRecipientEmail(getCustomerEmail(event.getCustomerId()));
+        dto.setRecipientEmail(event.getCustomerEmail());
         dto.setRelatedOrderId(event.getOrderId());
 
         notificationService.sendNotification(dto);
-        log.info("Payment failed email sent for order {}", event.getOrderId());
+        log.info("Payment failed email sent to {} for order {}", event.getCustomerEmail(), event.getOrderId());
     }
 
     private void sendPaymentRefundedEmail(PaymentEvent event) {
@@ -143,16 +143,10 @@ public class NotificationEventListener {
         dto.setMessage(String.format("Your refund of Rs. %.2f has been processed. The amount will be credited to your account within 5-7 business days.",
                 event.getAmount()));
         dto.setType(NotificationType.EMAIL);
-        dto.setRecipientEmail(getCustomerEmail(event.getCustomerId()));
+        dto.setRecipientEmail(event.getCustomerEmail());
         dto.setRelatedOrderId(event.getOrderId());
 
         notificationService.sendNotification(dto);
-        log.info("Refund email sent for transaction {}", event.getTransactionId());
-    }
-
-    private String getCustomerEmail(Long customerId) {
-        // For testing: return your actual email
-        // In production: fetch from user-service or include in Kafka event
-        return "atulmisal89@gmail.com";
+        log.info("Refund email sent to {} for transaction {}", event.getCustomerEmail(), event.getTransactionId());
     }
 }

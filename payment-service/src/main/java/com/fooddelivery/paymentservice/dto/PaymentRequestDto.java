@@ -17,6 +17,9 @@ public class PaymentRequestDto {
     @NotNull(message = "Customer ID is required")
     private Long customerId;
     
+    @NotNull(message = "Customer email is required")
+    private String customerEmail;
+    
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be positive")
     private Double amount;

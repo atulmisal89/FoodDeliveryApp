@@ -16,6 +16,7 @@ public class PaymentEvent {
     private String transactionId;
     private Long orderId;
     private Long customerId;
+    private String customerEmail;
     private Double amount;
     private String status;
     private String eventType;

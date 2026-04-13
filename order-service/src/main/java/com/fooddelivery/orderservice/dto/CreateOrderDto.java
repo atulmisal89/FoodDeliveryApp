@@ -17,6 +17,9 @@ public class CreateOrderDto {
     @NotNull(message = "Customer ID is required")
     private Long customerId;
     
+    @NotNull(message = "Customer email is required")
+    private String customerEmail;
+    
     @NotNull(message = "Restaurant ID is required")
     private Long restaurantId;
     

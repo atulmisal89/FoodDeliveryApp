@@ -28,6 +28,9 @@ public class Order {
     private Long customerId;
     
     @Column(nullable = false)
+    private String customerEmail;
+    
+    @Column(nullable = false)
     private Long restaurantId;
     
     private String restaurantName;
