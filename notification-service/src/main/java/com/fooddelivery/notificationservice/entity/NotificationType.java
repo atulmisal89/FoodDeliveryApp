@@ -1,6 +1,9 @@
 package com.fooddelivery.notificationservice.entity;
 
 public enum NotificationType {
+    EMAIL,
+    SMS,
+    PUSH,
     ORDER_CREATED,
     ORDER_CONFIRMED,
     ORDER_PREPARING,

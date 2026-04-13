@@ -7,8 +7,6 @@ import com.fooddelivery.notificationservice.entity.NotificationStatus;
 import com.fooddelivery.notificationservice.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +21,7 @@ import java.util.stream.Collectors;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final JavaMailSender mailSender;
+    private final SendGridEmailService sendGridEmailService;
 
     public NotificationDto sendNotification(SendNotificationDto sendNotificationDto) {
         Notification notification = new Notification();
@@ -38,7 +36,7 @@ public class NotificationService {
         notification.setStatus(NotificationStatus.PENDING);
 
         try {
-            sendEmail(sendNotificationDto.getRecipientEmail(), sendNotificationDto.getTitle(), sendNotificationDto.getMessage());
+            sendGridEmailService.sendEmail(sendNotificationDto.getRecipientEmail(), sendNotificationDto.getTitle(), sendNotificationDto.getMessage());
             notification.setStatus(NotificationStatus.SENT);
             notification.setSentAt(LocalDateTime.now());
             log.info("Email sent successfully to {}", sendNotificationDto.getRecipientEmail());
@@ -108,7 +106,7 @@ public class NotificationService {
 
         for (Notification notification : failedNotifications) {
             try {
-                sendEmail(notification.getRecipientEmail(), notification.getTitle(), notification.getMessage());
+                sendGridEmailService.sendEmail(notification.getRecipientEmail(), notification.getTitle(), notification.getMessage());
                 notification.setStatus(NotificationStatus.SENT);
                 notification.setSentAt(LocalDateTime.now());
                 notificationRepository.save(notification);
@@ -117,15 +115,6 @@ public class NotificationService {
                 log.error("Retry failed for notification {}: {}", notification.getId(), e.getMessage());
             }
         }
-    }
-
-    private void sendEmail(String to, String subject, String body) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(body);
-        message.setFrom("noreply@fooddelivery.com");
-        mailSender.send(message);
     }
 
     private NotificationDto mapToDto(Notification notification) {
