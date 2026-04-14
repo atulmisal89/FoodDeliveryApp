@@ -16,6 +16,7 @@ public class OrderEvent {
     private String orderNumber;
     private Long customerId;
     private String customerEmail;
+    private String customerPhone;
     private Long restaurantId;
     private String status;
     private String eventType;

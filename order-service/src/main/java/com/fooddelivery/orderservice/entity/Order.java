@@ -31,6 +31,9 @@ public class Order {
     private String customerEmail;
     
     @Column(nullable = false)
+    private String customerPhone;
+    
+    @Column(nullable = false)
     private Long restaurantId;
     
     private String restaurantName;

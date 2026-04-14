@@ -20,6 +20,9 @@ public class CreateOrderDto {
     @NotNull(message = "Customer email is required")
     private String customerEmail;
     
+    @NotNull(message = "Customer phone is required")
+    private String customerPhone;
+    
     @NotNull(message = "Restaurant ID is required")
     private Long restaurantId;
     

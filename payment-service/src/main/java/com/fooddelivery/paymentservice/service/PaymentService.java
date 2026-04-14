@@ -45,6 +45,7 @@ public class PaymentService {
         payment.setOrderId(requestDto.getOrderId());
         payment.setCustomerId(requestDto.getCustomerId());
         payment.setCustomerEmail(requestDto.getCustomerEmail());
+        payment.setCustomerPhone(requestDto.getCustomerPhone());
         payment.setAmount(requestDto.getAmount());
         payment.setPaymentMethod(requestDto.getPaymentMethod());
         payment.setCurrency(requestDto.getCurrency());
@@ -208,6 +209,7 @@ public class PaymentService {
                 .orderId(payment.getOrderId())
                 .customerId(payment.getCustomerId())
                 .customerEmail(payment.getCustomerEmail())
+                .customerPhone(payment.getCustomerPhone())
                 .amount(payment.getAmount())
                 .status(payment.getStatus().name())
                 .eventType(eventType)
@@ -244,6 +246,7 @@ public class PaymentService {
         private Long orderId;
         private Long customerId;
         private String customerEmail;
+        private String customerPhone;
         private Double amount;
         private String status;
         private String eventType;

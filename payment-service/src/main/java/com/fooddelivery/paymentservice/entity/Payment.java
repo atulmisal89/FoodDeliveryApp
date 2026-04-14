@@ -32,6 +32,9 @@ public class Payment {
     private String customerEmail;
     
     @Column(nullable = false)
+    private String customerPhone;
+    
+    @Column(nullable = false)
     private Double amount;
     
     @Enumerated(EnumType.STRING)

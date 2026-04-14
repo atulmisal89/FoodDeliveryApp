@@ -42,6 +42,7 @@ public class OrderService {
         order.setOrderNumber(generateOrderNumber());
         order.setCustomerId(createOrderDto.getCustomerId());
         order.setCustomerEmail(createOrderDto.getCustomerEmail());
+        order.setCustomerPhone(createOrderDto.getCustomerPhone());
         order.setRestaurantId(createOrderDto.getRestaurantId());
         order.setRestaurantName(createOrderDto.getRestaurantName());
         order.setDeliveryAddress(createOrderDto.getDeliveryAddress());
@@ -222,6 +223,7 @@ public class OrderService {
                     .orderNumber(order.getOrderNumber())
                     .customerId(order.getCustomerId())
                     .customerEmail(order.getCustomerEmail())
+                    .customerPhone(order.getCustomerPhone())
                     .restaurantId(order.getRestaurantId())
                     .status(order.getStatus().name())
                     .eventType(eventType)

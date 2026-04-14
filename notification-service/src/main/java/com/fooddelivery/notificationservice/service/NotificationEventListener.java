@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 public class NotificationEventListener {
 
     private final NotificationService notificationService;
+    private final TwilioSmsService twilioSmsService;
 
     @KafkaListener(topics = "order-events", groupId = "notification-service-group",
                    containerFactory = "orderEventListenerFactory")
@@ -67,6 +68,7 @@ public class NotificationEventListener {
     }
 
     private void sendOrderCreatedEmail(OrderEvent event) {
+        // Send Email
         SendNotificationDto dto = new SendNotificationDto();
         dto.setUserId(event.getCustomerId());
         dto.setTitle("Order Confirmed!");
@@ -78,6 +80,13 @@ public class NotificationEventListener {
 
         notificationService.sendNotification(dto);
         log.info("Order created email sent to {} for order {}", event.getCustomerEmail(), event.getOrderNumber());
+
+        // Send SMS
+        if (event.getCustomerPhone() != null && !event.getCustomerPhone().isEmpty()) {
+            String smsMessage = String.format("Hi! Your order %s has been confirmed and is being processed. - FoodDelivery App",
+                    event.getOrderNumber());
+            twilioSmsService.sendSms(event.getCustomerPhone(), smsMessage);
+        }
     }
 
     private void sendDeliveryAssignedEmail(OrderEvent event) {
@@ -109,6 +118,7 @@ public class NotificationEventListener {
     }
 
     private void sendPaymentSuccessEmail(PaymentEvent event) {
+        // Send Email
         SendNotificationDto dto = new SendNotificationDto();
         dto.setUserId(event.getCustomerId());
         dto.setTitle("Payment Successful!");
@@ -120,6 +130,13 @@ public class NotificationEventListener {
 
         notificationService.sendNotification(dto);
         log.info("Payment success email sent to {} for transaction {}", event.getCustomerEmail(), event.getTransactionId());
+
+        // Send SMS
+        if (event.getCustomerPhone() != null && !event.getCustomerPhone().isEmpty()) {
+            String smsMessage = String.format("Payment successful! Rs.%.2f received for your order. Transaction ID: %s - FoodDelivery App",
+                    event.getAmount(), event.getTransactionId());
+            twilioSmsService.sendSms(event.getCustomerPhone(), smsMessage);
+        }
     }
 
     private void sendPaymentFailedEmail(PaymentEvent event) {
