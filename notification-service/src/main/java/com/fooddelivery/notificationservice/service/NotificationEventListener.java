@@ -16,8 +16,8 @@ public class NotificationEventListener {
 
     private final NotificationService notificationService;
 
-    @KafkaListener(topics = "order-events", groupId = "notification-service-group", 
-                   properties = {"spring.json.value.default.type=com.fooddelivery.notificationservice.event.OrderEvent"})
+    @KafkaListener(topics = "order-events", groupId = "notification-service-group",
+                   containerFactory = "orderEventListenerFactory")
     public void handleOrderEvent(OrderEvent event) {
         try {
             log.info("Received order event: {} for order {}", event.getEventType(), event.getOrderId());
@@ -43,7 +43,7 @@ public class NotificationEventListener {
     }
 
     @KafkaListener(topics = "payment-events", groupId = "notification-service-group",
-                   properties = {"spring.json.value.default.type=com.fooddelivery.notificationservice.event.PaymentEvent"})
+                   containerFactory = "paymentEventListenerFactory")
     public void handlePaymentEvent(PaymentEvent event) {
         try {
             log.info("Received payment event: {} for order {}", event.getEventType(), event.getOrderId());

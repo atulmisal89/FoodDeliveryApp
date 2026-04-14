@@ -193,8 +193,8 @@ public class PaymentService {
         // In real implementation, this would call actual payment gateway APIs
         
         // For demo purposes, randomly succeed 90% of payments
-        //return Math.random() > 0.1;
-        return false;  // Force failure for testing
+        return Math.random() > 0.1;
+        //return false;  // Force failure for testing
     }
     
     private String generateTransactionId() {
